@@ -11,7 +11,7 @@ namespace Käpy.Business
 
         public Storage()
         {
-            Resource.All.ToList().ForEach(r => resourceDictionary.Add(r.Name, r));
+            Resources.All.ToList().ForEach(r => resourceDictionary.Add(r.Name, r));
         }
 
         public void Add(string resource, int amount)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Käpy.Business
@@ -8,19 +7,14 @@ namespace Käpy.Business
     public class Technology
     {
         public string Name { get; set; }
-    }
 
-    public static class Technologies
-    {
-        public static string Käpylehmä = "Käpylehmän rakentaminen";
+        //public Func<GameState, bool> UnlockFn { get; set; } = NoRequirements();
 
-        public static IEnumerable<Technology> All
-        {
-            get => typeof(Technologies)
-                    .GetFields()
-                    .Where(fi => fi.IsPublic && fi.IsStatic)
-                    .Select(fi => fi.GetValue(null) as string)
-                    .Select(name => new Technology { Name = name });
-        }
+        public IEnumerable<Cost> UnlockCosts = null;
+
+        //public static Func<GameState, bool> NoRequirements()
+        //{
+        //    return (GameState) => true;
+        //}
     }
 }

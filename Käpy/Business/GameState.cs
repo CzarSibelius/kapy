@@ -12,7 +12,11 @@ namespace Käpy.Business
         public List<Technology> ResearchedTechnologies = new List<Technology>();
         public List<Technology> UnresearchedTechnologies
         {
-            get => Technologies.All.Where(t => !ResearchedTechnologies.Any(researched => researched.Name == t.Name)).ToList();
+            get => Technologies.All
+                .Where(t =>
+                    !ResearchedTechnologies.Any(researched => researched.Name == t.Name) &&
+                    (t.UnlockCosts == null || t.UnlockCosts.All(c => storage.All.Any(x => x.Key == c.Name && x.Value.Amount >= c.Amount))))
+                .ToList();
         }
 
         public List<Resource> Resources
