@@ -1,0 +1,55 @@
+﻿@page "/counter"
+
+<h1>Counter</h1>
+
+<div class="row">
+    <div class="col">
+        @foreach (var resource in gameState.Resources)
+        {
+            <p>@resource.Name: @resource.Amount</p>
+        }
+    </div>
+    <div class="col">
+        <h4>Uudet teknologiat</h4>
+        @foreach (var technology in gameState.UnresearchedTechnologies)
+        {
+            <button class="btn btn-primary" @onclick="() => Research(technology)">
+                @technology.Name
+            </button>
+        }
+        <h4>Tutkitut</h4>
+        @foreach (var technology in gameState.ResearchedTechnologies)
+        {
+            <p>@technology.Name</p>
+        }
+    </div>
+
+</div>
+
+@foreach (var resource in gameState.Resources)
+{
+    if (gameState.CanBeBuilt(resource))
+    {
+        <button class="btn btn-primary" @onclick="() => IncrementResource(resource.Name)">@resource.Name</button>
+    }
+    else
+    {
+        <button class="btn btn-primary" disabled>@resource.Name</button>
+    }
+
+}
+
+@code {
+
+    private GameState gameState = new GameState();
+
+    private void IncrementResource(string resource)
+    {
+        gameState.AddResource(resource, 1);
+    }
+
+    private void Research(Technology technology)
+    {
+        gameState.ResearchedTechnologies.Add(technology);
+    }
+}
