@@ -7,7 +7,7 @@ namespace Käpy.Business
 {
     public class GameState
     {
-        private Storage storage = new Storage();
+        private readonly Storage storage = new Storage();
 
         public List<Technology> ResearchedTechnologies = new List<Technology>();
         public List<Technology> UnresearchedTechnologies
