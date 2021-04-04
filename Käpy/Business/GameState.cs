@@ -29,7 +29,7 @@ namespace Käpy.Business
             storage.Add(resourceName, amount);
             var resource = storage.All[resourceName];
 
-            resource.Costs?.ToList().ForEach(c => AddResource(c.Item1, -1 * c.Item2));
+            resource.Costs?.ToList().ForEach(c => AddResource(c.Name, -1 * c.Amount));
         }
 
         public bool CanBeBuilt(Resource resource)
@@ -40,7 +40,7 @@ namespace Käpy.Business
             }
             foreach (var cost in resource.Costs)
             {
-                if (storage.All[cost.Item1].Amount < cost.Item2)
+                if (storage.All[cost.Name].Amount < cost.Amount)
                 {
                     return false;
                 }

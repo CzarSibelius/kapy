@@ -16,8 +16,8 @@ namespace Käpy.Business
                     RequirementFn = RequiresTechnology(Technologies.Käpylehmä),
                     Costs = new []
                     {
-                        ("Käpy", 1),
-                        ("Tikku", 4)
+                        new Cost{Name = "Käpy", Amount = 1 },
+                        new Cost{Name = "Tikku", Amount = 4 },
                     }
                 },
             };

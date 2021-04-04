@@ -9,7 +9,7 @@ namespace Käpy.Business
 
         public Func<GameState, bool> RequirementFn { get; set; } = NoRequirements();
 
-        public IEnumerable<(string, int)> Costs = null;
+        public IEnumerable<Cost> Costs = null;
 
         public int Amount { get; set; }
 
