@@ -7,10 +7,11 @@ namespace Käpy.Business
 {
     public static class Technologies
     {
-        [RequiresResource(Resources.Käpy, 30)]
+        [RequiresResource(Resources.Käpy, 100)]
         public const string Tikku = "Tikkujen kerääminen";
 
         [RequiresTechnology(Technologies.Tikku)]
+        [RequiresResource(Resources.Tikku, 40)]
         public const string Käpylehmä = "Käpylehmän rakentaminen";
 
         public static IEnumerable<Technology> All

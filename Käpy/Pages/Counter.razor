@@ -1,4 +1,5 @@
 ﻿@page "/counter"
+@using System.Timers
 
 <h1>Counter</h1>
 
@@ -6,21 +7,27 @@
     <div class="col">
         @foreach (var resource in gameState.Resources.Where(r => r.IsUnlocked(gameState)))
         {
-            <p>@resource.Name: @resource.Amount</p>
+            <p>@resource.Name: @resource.Amount (@statistics.Get(resource.Name)/s)</p>
         }
     </div>
     <div class="col">
-        <h4>Uudet teknologiat</h4>
-        @foreach (var technology in gameState.UnresearchedTechnologies)
+        @if (gameState.UnresearchedTechnologies.Any() || gameState.ResearchedTechnologies.Any())
         {
-            <button class="btn btn-primary" @onclick="() => Research(technology)">
-                @technology.Name
-            </button>
+            <h4>Uudet teknologiat</h4>
+            @foreach (var technology in gameState.UnresearchedTechnologies)
+            {
+                <button class="btn btn-primary" @onclick="() => Research(technology)">
+                    @technology.Name
+                </button>
+            }
         }
-        <h4>Tutkitut</h4>
-        @foreach (var technology in gameState.ResearchedTechnologies)
+        @if (gameState.ResearchedTechnologies.Any())
         {
-            <p>@technology.Name</p>
+            <h4>Tutkitut</h4>
+            @foreach (var technology in gameState.ResearchedTechnologies)
+            {
+                <p>@technology.Name</p>
+            }
         }
     </div>
 
@@ -42,14 +49,33 @@
 @code {
 
     private GameState gameState = new GameState();
+    private Statistics statistics = new Statistics();
+
+    private Timer secTimer = new Timer(1000);
+
+
+    protected override void OnInitialized()
+    {
+        secTimer.Elapsed += OnTimer;
+        secTimer.Enabled = true;
+
+        base.OnInitialized();
+    }
 
     private void IncrementResource(string resource)
     {
         gameState.AddResource(resource, 1);
+        statistics.AddStatistics(resource, 1);
     }
 
     private void Research(Technology technology)
     {
         gameState.ResearchedTechnologies.Add(technology);
+    }
+
+    private void OnTimer(Object source, ElapsedEventArgs e)
+    {
+        statistics.Clear();
+        InvokeAsync(StateHasChanged);
     }
 }
