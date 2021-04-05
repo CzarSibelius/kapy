@@ -17,13 +17,16 @@ namespace Käpy.Business
                     !ResearchedTechnologies.Any(researched => researched.Name == t.Name) &&
                     (t.UnlockRequirements == null ||
                     t.UnlockRequirements
-                        .All(c => c.RequirementCanBeMet(this))))
+                        .All(c => c.RequirementIsMet(this))))
                 .ToList();
         }
 
         public List<Resource> Resources
         {
-            get => storage.All.Where(r => r.Value.RequirementFn(this)).Select(r => r.Value).ToList();
+            get => storage.All
+               // .Where(r => r.Value.CanBeBuilt(this))
+                .Select(r => r.Value)
+                .ToList();
         }
 
         public void AddResource(string resourceName, int amount)
@@ -31,7 +34,7 @@ namespace Käpy.Business
             storage.Add(resourceName, amount);
             var resource = storage.All[resourceName];
 
-            resource.Costs?
+            resource.BuildRequirements?
                 .Where(c => c is ResourceCost)
                 .Cast<ResourceCost>()
                 .ToList()
@@ -40,17 +43,17 @@ namespace Käpy.Business
 
         public bool CanBeBuilt(Resource resource)
         {
-            if (resource.Costs == null)
-            {
-                return true;
-            }
-            foreach (var cost in resource.Costs.Where(c => c is ResourceCost).Cast<ResourceCost>())
-            {
-                if (storage.All[cost.Name].Amount < cost.Amount)
-                {
-                    return false;
-                }
-            }
+            //if (resource.Costs == null)
+            //{
+            //    return true;
+            //}
+            //foreach (var cost in resource.Costs.Where(c => c is ResourceCost).Cast<ResourceCost>())
+            //{
+            //    if (storage.All[cost.Name].Amount < cost.Amount)
+            //    {
+            //        return false;
+            //    }
+            //}
 
             return true;
         }

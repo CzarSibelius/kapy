@@ -4,7 +4,7 @@
 
 <div class="row">
     <div class="col">
-        @foreach (var resource in gameState.Resources)
+        @foreach (var resource in gameState.Resources.Where(r => r.IsUnlocked(gameState)))
         {
             <p>@resource.Name: @resource.Amount</p>
         }
@@ -26,9 +26,9 @@
 
 </div>
 
-@foreach (var resource in gameState.Resources)
+@foreach (var resource in gameState.Resources.Where(r => r.IsUnlocked(gameState)))
 {
-    if (gameState.CanBeBuilt(resource))
+    if (resource.CanBeBuilt(gameState))
     {
         <button class="btn btn-primary" @onclick="() => IncrementResource(resource.Name)">@resource.Name</button>
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Käpy.Business
 {
@@ -7,15 +8,31 @@ namespace Käpy.Business
     {
         public string Name { get; set; }
 
-        public Func<GameState, bool> RequirementFn { get; set; } = NoRequirements();
 
-        public IEnumerable<Cost> Costs = null;
+        public List<Cost> BuildRequirements = new List<Cost>();
+
+        public List<Cost> UnlockRequirements = new List<Cost>();
 
         public int Amount { get; set; }
 
-        public static Func<GameState, bool> NoRequirements()
+        public bool CanBeBuilt(GameState state)
         {
-            return (GameState) => true;
+            if(!BuildRequirements.Any())
+            {
+                return true;
+            }
+
+            return BuildRequirements.All(c => c.RequirementIsMet(state));
+        }
+
+        public bool IsUnlocked(GameState state)
+        {
+            if (!UnlockRequirements.Any())
+            {
+                return true;
+            }
+
+            return UnlockRequirements.All(c => c.RequirementIsMet(state));
         }
     }
 }

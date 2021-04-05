@@ -6,7 +6,7 @@ namespace Käpy.Business
     {
         public string Name { get; set; }
 
-        public abstract bool RequirementCanBeMet(GameState state);
+        public abstract bool RequirementIsMet(GameState state);
         
     }
 
@@ -14,7 +14,7 @@ namespace Käpy.Business
     {
         public int Amount { get; set; }
 
-        public override bool RequirementCanBeMet(GameState state)
+        public override bool RequirementIsMet(GameState state)
         {
             return state.Resources.Any(r => r.Name == Name && r.Amount >= Amount);
         }
@@ -22,7 +22,7 @@ namespace Käpy.Business
 
     public class TechnologyCost : Cost
     {
-        public override bool RequirementCanBeMet(GameState state)
+        public override bool RequirementIsMet(GameState state)
         {
             return state.ResearchedTechnologies.Any(t => t.Name == Name);
         }
