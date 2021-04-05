@@ -40,5 +40,10 @@ namespace Käpy.Business
                 .ForEach(c => AddResource(c.Name, -1 * c.Amount));
         }
 
+        public bool HasTechnology(string technologyName)
+        {
+            return ResearchedTechnologies.Any(t => t.Name == technologyName);
+        }
+
     }
 }

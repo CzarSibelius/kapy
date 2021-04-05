@@ -7,6 +7,9 @@ namespace Käpy.Business
 {
     public static class Technologies
     {
+        [RequiresResource(Resources.Käpy, 30)]
+        public const string ResurssiMittari = "Resurssimittari";
+
         [RequiresResource(Resources.Käpy, 100)]
         public const string Tikku = "Tikkujen kerääminen";
 

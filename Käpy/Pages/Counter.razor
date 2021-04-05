@@ -8,7 +8,11 @@
     <div class="col">
         @foreach (var resource in gameState.Resources.Where(r => r.IsUnlocked(gameState)))
         {
-            <p>@resource.Name: @resource.Amount (@statistics.Get(resource.Name)/s)</p>
+            <p>
+                @resource.Name: @resource.Amount @(gameState.HasTechnology(Technologies.ResurssiMittari)
+                    ? $"({statistics.Get(resource.Name)}/s)"
+                    : "")
+            </p>
         }
     </div>
     <div class="col">
@@ -17,9 +21,11 @@
             <h4>Uudet teknologiat</h4>
             @foreach (var technology in gameState.ResearchableTechnologies)
             {
-                <button class="btn btn-primary" @onclick="() => Research(technology)">
+                <p>
                     @technology.Name
-                </button>
+                    <button class="btn btn-primary" @onclick="() => Research(technology)">Tutki</button>
+                </p>
+
             }
         }
         @if (gameState.ResearchedTechnologies.Any())
