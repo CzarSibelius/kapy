@@ -1,5 +1,6 @@
 ﻿@page "/counter"
 @using System.Timers
+@implements IDisposable
 
 <h1>Counter</h1>
 
@@ -77,5 +78,10 @@
     {
         statistics.Clear();
         InvokeAsync(StateHasChanged);
+    }
+
+    void IDisposable.Dispose()
+    {
+        secTimer?.Dispose();
     }
 }

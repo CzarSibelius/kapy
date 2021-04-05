@@ -18,7 +18,6 @@ namespace Käpy.Business
         public void Clear()
         {
             previousStats = resourceStats;
-            //resourceStats.Values.ToList().ForEach(v => v = 0);
             resourceStats = Initialize();
         }
 
