@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Käpy.Business
 {
     public static class Technologies
     {
-        [RequiresResource("Käpy", 30)]
-        public static string Tikku = "Tikkujen kerääminen";
-        public static string Käpylehmä = "Käpylehmän rakentaminen";
+        [RequiresResource(Resources.Käpy, 30)]
+        public const string Tikku = "Tikkujen kerääminen";
+
+        [RequiresTechnology(Technologies.Tikku)]
+        public const string Käpylehmä = "Käpylehmän rakentaminen";
 
         public static IEnumerable<Technology> All
         {
@@ -18,16 +21,24 @@ namespace Käpy.Business
                     .Select(fi => new Technology
                     {
                         Name = fi.GetValue(null) as string,
-                        UnlockCosts = fi.GetCustomAttributes(false)
-                            .Where(a => a is RequiresResourceAttribute)
-                            .Cast<RequiresResourceAttribute>()
-                            .Select(a => new Cost { Name = a.Name, Amount = a.Amount})
+                        UnlockRequirements = GetResourceRequirements(fi).Concat(GetTechnologyRequirements(fi))
                     });
         }
 
-        public static Func<GameState, bool> Require(string resourceName, int amount)
+        private static IEnumerable<Cost> GetResourceRequirements(FieldInfo fieldInfo)
         {
-            return (GameState) => true;
+            return fieldInfo.GetCustomAttributes(false)
+                            .Where(a => a is RequiresResourceAttribute)
+                            .Cast<RequiresResourceAttribute>()
+                            .Select(a => new ResourceCost { Name = a.Name, Amount = a.Amount });
+        }
+
+        private static IEnumerable<Cost> GetTechnologyRequirements(FieldInfo fieldInfo)
+        {
+            return fieldInfo.GetCustomAttributes(false)
+                            .Where(a => a is RequiresTechnologyAttribute)
+                            .Cast<RequiresTechnologyAttribute>()
+                            .Select(a => new TechnologyCost { Name = a.Name });
         }
     }
 }

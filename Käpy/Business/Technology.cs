@@ -8,6 +8,6 @@ namespace Käpy.Business
     {
         public string Name { get; set; }
 
-        public IEnumerable<Cost> UnlockCosts = null;
+        public IEnumerable<Cost> UnlockRequirements = null;
     }
 }
