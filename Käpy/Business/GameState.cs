@@ -10,7 +10,7 @@ namespace Käpy.Business
         private readonly Storage storage = new Storage();
 
         public List<Technology> ResearchedTechnologies = new List<Technology>();
-        public List<Technology> UnresearchedTechnologies
+        public List<Technology> ResearchableTechnologies
         {
             get => Technologies.All
                 .Where(t =>
@@ -24,7 +24,6 @@ namespace Käpy.Business
         public List<Resource> Resources
         {
             get => storage.All
-               // .Where(r => r.Value.CanBeBuilt(this))
                 .Select(r => r.Value)
                 .ToList();
         }
@@ -41,21 +40,5 @@ namespace Käpy.Business
                 .ForEach(c => AddResource(c.Name, -1 * c.Amount));
         }
 
-        public bool CanBeBuilt(Resource resource)
-        {
-            //if (resource.Costs == null)
-            //{
-            //    return true;
-            //}
-            //foreach (var cost in resource.Costs.Where(c => c is ResourceCost).Cast<ResourceCost>())
-            //{
-            //    if (storage.All[cost.Name].Amount < cost.Amount)
-            //    {
-            //        return false;
-            //    }
-            //}
-
-            return true;
-        }
     }
 }

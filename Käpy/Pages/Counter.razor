@@ -12,10 +12,10 @@
         }
     </div>
     <div class="col">
-        @if (gameState.UnresearchedTechnologies.Any() || gameState.ResearchedTechnologies.Any())
+        @if (gameState.ResearchableTechnologies.Any() || gameState.ResearchedTechnologies.Any())
         {
             <h4>Uudet teknologiat</h4>
-            @foreach (var technology in gameState.UnresearchedTechnologies)
+            @foreach (var technology in gameState.ResearchableTechnologies)
             {
                 <button class="btn btn-primary" @onclick="() => Research(technology)">
                     @technology.Name
