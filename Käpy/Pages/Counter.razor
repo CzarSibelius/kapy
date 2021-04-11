@@ -4,7 +4,24 @@
 @inject IGameStateStorageService StateService;
 @inject IGameManager gameManager;
 
-<h1>Counter</h1>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand">Käpy</a>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" @onclick="LoadState">Lataa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" @onclick="SaveState">Tallenna</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" @onclick="ResetState">Aloita alusta</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 @if (gameManager.State != null)
 {
     <div class="row">
@@ -13,8 +30,8 @@
             {
                 <p>
                     @resource.Name: @resource.Amount @(gameManager.State.HasTechnology(TechnologyConfig.ResurssiMittari)
-                    ? $"({statistics.Get(resource.Name)}/s)"
-                    : "")
+                                                        ? $"({statistics.Get(resource.Name)}/s)"
+                                                        : "")
                 </p>
             }
         </div>
@@ -42,25 +59,23 @@
         </div>
 
     </div>
+    <div class="row">
 
-
-    @foreach (var resource in gameManager.State.UnlockedResources)
-    {
-        if (resource.CanBeBuilt(gameManager.State))
+        @foreach (var resource in gameManager.State.UnlockedResources)
         {
-            <button class="btn btn-primary" @onclick="() => IncrementResource(resource.Name)">@resource.Name</button>
-        }
-        else
-        {
-            <button class="btn btn-primary" disabled>@resource.Name</button>
+            if (resource.CanBeBuilt(gameManager.State))
+            {
+                <button class="btn btn-primary" @onclick="() => IncrementResource(resource.Name)">@resource.Name</button>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>@resource.Name</button>
+            }
+
         }
 
-    }
-
-    <button class="btn btn-primary" @onclick="LoadState">Lataa peli</button>
-    <button class="btn btn-primary" @onclick="SaveState">Tallenna peli</button>
+    </div>
 }
-
 @code {
 
     private Statistics statistics = new Statistics();
@@ -72,8 +87,7 @@
     {
         secTimer.Elapsed += OnTimer;
         secTimer.Enabled = true;
-
-        //gameState = gameManager.State;
+        await LoadState();
     }
 
     private void IncrementResource(string resource)
@@ -101,7 +115,13 @@
 
     private async Task LoadState()
     {
-        //gameState = await StateService.GetStateAsync();
+        var gameState = await StateService.GetStateAsync();
+        gameManager.State = gameState;
+    }
+
+    private void ResetState()
+    {
+        gameManager.State = new GameState();
     }
 
     void IDisposable.Dispose()
