@@ -7,12 +7,18 @@ namespace Käpy.Business
 {
     public class GameState
     {
-        private readonly Storage storage = new Storage();
+        public Dictionary<string, int> Resources { get; set; } = new Dictionary<string, int>();
+        //private readonly Storage storage = new Storage();
+
+        public GameState()
+        {
+            ResourceConfig.All.ToList().ForEach(r => Resources.Add(r.Name, 0));
+        }
 
         public List<Technology> ResearchedTechnologies = new List<Technology>();
         public List<Technology> ResearchableTechnologies
         {
-            get => Technologies.All
+            get => TechnologyConfig.All
                 .Where(t =>
                     !ResearchedTechnologies.Any(researched => researched.Name == t.Name) &&
                     (t.UnlockRequirements == null ||
@@ -21,24 +27,12 @@ namespace Käpy.Business
                 .ToList();
         }
 
-        public List<Resource> Resources
+        public IEnumerable<(string Name, int Amount)> ResourceAmounts
         {
-            get => storage.All
-                .Select(r => r.Value)
-                .ToList();
+            get => UnlockedResources.Select(ur => (ur.Name, Resources[ur.Name]));
         }
 
-        public void AddResource(string resourceName, int amount)
-        {
-            storage.Add(resourceName, amount);
-            var resource = storage.All[resourceName];
-
-            resource.BuildRequirements?
-                .Where(c => c is ResourceCost)
-                .Cast<ResourceCost>()
-                .ToList()
-                .ForEach(c => AddResource(c.Name, -1 * c.Amount));
-        }
+        public IEnumerable<Resource> UnlockedResources { get => Resources.Select(r => ResourceConfig.Get(r.Key)).Where(r => r.IsUnlocked(this)); }
 
         public bool HasTechnology(string technologyName)
         {

@@ -5,21 +5,21 @@ using System.Reflection;
 
 namespace Käpy.Business
 {
-    public static class Resources
+    public static class ResourceConfig
     {
         public const string Käpy = "Käpy";
 
-        [RequiresTechnology(Technologies.Tikku)]
+        [RequiresTechnology(TechnologyConfig.Tikku)]
         public const string Tikku = "Tikku";
 
-        [RequiresTechnology(Technologies.Käpylehmä)]
-        [RequiresResource(Resources.Käpy, 1)]
-        [RequiresResource(Resources.Tikku, 4)]
+        [RequiresTechnology(TechnologyConfig.Käpylehmä)]
+        [RequiresResource(ResourceConfig.Käpy, 1)]
+        [RequiresResource(ResourceConfig.Tikku, 4)]
         public const string Käpylehmä = "Käpylehmä";
 
         public static IEnumerable<Resource> All
         {
-            get => typeof(Resources)
+            get => typeof(ResourceConfig)
                     .GetFields()
                     .Where(fi => fi.IsPublic && fi.IsStatic)
                     .Select(fi => new Resource
@@ -28,6 +28,19 @@ namespace Käpy.Business
                         BuildRequirements = GetResourceRequirements(fi).ToList(),
                         UnlockRequirements = GetTechnologyRequirements(fi).ToList()
                     });
+        }
+        public static Resource Get(string resourceName)
+        {
+            try
+            {
+                return All.Single(r => r.Name == resourceName);
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine($"Could not find resourceName '{resourceName}' from Resource configuration.");
+                throw;
+            }
+            
         }
 
         private static IEnumerable<Cost> GetResourceRequirements(FieldInfo fieldInfo)

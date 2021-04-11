@@ -16,7 +16,7 @@ namespace Käpy.Business
 
         public override bool RequirementIsMet(GameState state)
         {
-            return state.Resources.Any(r => r.Name == Name && r.Amount >= Amount);
+            return state.Resources[Name] >= Amount;
         }
     }
 

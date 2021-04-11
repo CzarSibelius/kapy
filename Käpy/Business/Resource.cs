@@ -8,12 +8,9 @@ namespace Käpy.Business
     {
         public string Name { get; set; }
 
-
         public List<Cost> BuildRequirements = new List<Cost>();
 
         public List<Cost> UnlockRequirements = new List<Cost>();
-
-        public int Amount { get; set; }
 
         public bool CanBeBuilt(GameState state)
         {

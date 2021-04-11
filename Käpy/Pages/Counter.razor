@@ -1,89 +1,107 @@
 ﻿@page "/counter"
 @using System.Timers
 @implements IDisposable
+@inject IGameStateStorageService StateService;
+@inject IGameManager gameManager;
 
 <h1>Counter</h1>
-
-<div class="row">
-    <div class="col">
-        @foreach (var resource in gameState.Resources.Where(r => r.IsUnlocked(gameState)))
-        {
-            <p>
-                @resource.Name: @resource.Amount @(gameState.HasTechnology(Technologies.ResurssiMittari)
-                    ? $"({statistics.Get(resource.Name)}/s)"
-                    : "")
-            </p>
-        }
-    </div>
-    <div class="col">
-        @if (gameState.ResearchableTechnologies.Any() || gameState.ResearchedTechnologies.Any())
-        {
-            <h4>Uudet teknologiat</h4>
-            @foreach (var technology in gameState.ResearchableTechnologies)
+@if (gameManager.State != null)
+{
+    <div class="row">
+        <div class="col">
+            @foreach (var resource in gameManager.State.ResourceAmounts)
             {
                 <p>
-                    @technology.Name
-                    <button class="btn btn-primary" @onclick="() => Research(technology)">Tutki</button>
+                    @resource.Name: @resource.Amount @(gameManager.State.HasTechnology(TechnologyConfig.ResurssiMittari)
+                    ? $"({statistics.Get(resource.Name)}/s)"
+                    : "")
                 </p>
-
             }
-        }
-        @if (gameState.ResearchedTechnologies.Any())
-        {
-            <h4>Tutkitut</h4>
-            @foreach (var technology in gameState.ResearchedTechnologies)
+        </div>
+        <div class="col">
+            @if (gameManager.State.ResearchableTechnologies.Any() || gameManager.State.ResearchedTechnologies.Any())
             {
-                <p>@technology.Name</p>
+                <h4>Uudet teknologiat</h4>
+                @foreach (var technology in gameManager.State.ResearchableTechnologies)
+                {
+                    <p>
+                        @technology.Name
+                        <button class="btn btn-primary" @onclick="() => Research(technology)">Tutki</button>
+                    </p>
+
+                }
             }
-        }
+            @if (gameManager.State.ResearchedTechnologies.Any())
+            {
+                <h4>Tutkitut</h4>
+                @foreach (var technology in gameManager.State.ResearchedTechnologies)
+                {
+                    <p>@technology.Name</p>
+                }
+            }
+        </div>
+
     </div>
 
-</div>
 
-@foreach (var resource in gameState.Resources.Where(r => r.IsUnlocked(gameState)))
-{
-    if (resource.CanBeBuilt(gameState))
+    @foreach (var resource in gameManager.State.UnlockedResources)
     {
-        <button class="btn btn-primary" @onclick="() => IncrementResource(resource.Name)">@resource.Name</button>
-    }
-    else
-    {
-        <button class="btn btn-primary" disabled>@resource.Name</button>
+        if (resource.CanBeBuilt(gameManager.State))
+        {
+            <button class="btn btn-primary" @onclick="() => IncrementResource(resource.Name)">@resource.Name</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" disabled>@resource.Name</button>
+        }
+
     }
 
+    <button class="btn btn-primary" @onclick="LoadState">Lataa peli</button>
+    <button class="btn btn-primary" @onclick="SaveState">Tallenna peli</button>
 }
 
 @code {
 
-    private GameState gameState = new GameState();
     private Statistics statistics = new Statistics();
 
     private Timer secTimer = new Timer(1000);
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         secTimer.Elapsed += OnTimer;
         secTimer.Enabled = true;
 
-        base.OnInitialized();
+        //gameState = gameManager.State;
     }
 
     private void IncrementResource(string resource)
     {
-        gameState.AddResource(resource, 1);
+        gameManager.AddResource(resource, 1);
         statistics.AddStatistics(resource, 1);
+        InvokeAsync(StateHasChanged);
     }
 
     private void Research(Technology technology)
     {
-        gameState.ResearchedTechnologies.Add(technology);
+        gameManager.Research(technology);
     }
 
     private void OnTimer(Object source, ElapsedEventArgs e)
     {
         statistics.Clear();
         InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SaveState()
+    {
+        await StateService.SaveStateAsync(gameManager.State);
+    }
+
+    private async Task LoadState()
+    {
+        //gameState = await StateService.GetStateAsync();
     }
 
     void IDisposable.Dispose()

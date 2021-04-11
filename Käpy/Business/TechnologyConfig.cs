@@ -5,21 +5,21 @@ using System.Reflection;
 
 namespace Käpy.Business
 {
-    public static class Technologies
+    public static class TechnologyConfig
     {
-        [RequiresResource(Resources.Käpy, 30)]
+        [RequiresResource(ResourceConfig.Käpy, 30)]
         public const string ResurssiMittari = "Resurssimittari";
 
-        [RequiresResource(Resources.Käpy, 100)]
+        [RequiresResource(ResourceConfig.Käpy, 100)]
         public const string Tikku = "Tikkujen kerääminen";
 
-        [RequiresTechnology(Technologies.Tikku)]
-        [RequiresResource(Resources.Tikku, 40)]
+        [RequiresTechnology(TechnologyConfig.Tikku)]
+        [RequiresResource(ResourceConfig.Tikku, 40)]
         public const string Käpylehmä = "Käpylehmän rakentaminen";
 
         public static IEnumerable<Technology> All
         {
-            get => typeof(Technologies)
+            get => typeof(TechnologyConfig)
                     .GetFields()
                     .Where(fi => fi.IsPublic && fi.IsStatic)
                     .Select(fi => new Technology

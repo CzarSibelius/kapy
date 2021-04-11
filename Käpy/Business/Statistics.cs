@@ -28,7 +28,7 @@ namespace Käpy.Business
 
         private static Dictionary<string, int> Initialize()
         {
-            return Resources.All.ToDictionary(x => x.Name, x => 0);
+            return ResourceConfig.All.ToDictionary(x => x.Name, x => 0);
         }
     }
 }
