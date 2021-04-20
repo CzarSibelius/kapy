@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Käpy.Business;
+using Käpy.Business.Attributes;
+using Käpy.Business.Costs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Käpy.Business
+namespace Käpy.Data
 {
     public static class ResourceConfig
     {
@@ -13,8 +16,8 @@ namespace Käpy.Business
         public const string Tikku = "Tikku";
 
         [RequiresTechnology(TechnologyConfig.Käpylehmä)]
-        [RequiresResource(ResourceConfig.Käpy, 1)]
-        [RequiresResource(ResourceConfig.Tikku, 4)]
+        [RequiresResource(Käpy, 1)]
+        [RequiresResource(Tikku, 4)]
         public const string Käpylehmä = "Käpylehmä";
 
         public static IEnumerable<Resource> All
@@ -40,7 +43,7 @@ namespace Käpy.Business
                 Console.WriteLine($"Could not find resourceName '{resourceName}' from Resource configuration.");
                 throw;
             }
-            
+
         }
 
         private static IEnumerable<Cost> GetResourceRequirements(FieldInfo fieldInfo)

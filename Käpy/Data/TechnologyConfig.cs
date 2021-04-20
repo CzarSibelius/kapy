@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Käpy.Business;
+using Käpy.Business.Attributes;
+using Käpy.Business.Costs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Käpy.Business
+namespace Käpy.Data
 {
     public static class TechnologyConfig
     {
@@ -13,7 +16,7 @@ namespace Käpy.Business
         [RequiresResource(ResourceConfig.Käpy, 100)]
         public const string Tikku = "Tikkujen kerääminen";
 
-        [RequiresTechnology(TechnologyConfig.Tikku)]
+        [RequiresTechnology(Tikku)]
         [RequiresResource(ResourceConfig.Tikku, 40)]
         public const string Käpylehmä = "Käpylehmän rakentaminen";
 
