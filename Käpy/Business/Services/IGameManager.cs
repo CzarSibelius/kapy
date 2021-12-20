@@ -1,7 +1,4 @@
-﻿using Käpy.Business;
-using System.Threading.Tasks;
-
-namespace Käpy.Services
+﻿namespace Käpy.Business.Services
 {
     public interface IGameManager
     {

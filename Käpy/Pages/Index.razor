@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using System.Timers
+
 @implements IDisposable
 @inject IGameStateStorageService StateService;
 @inject IGameManager gameManager;
@@ -33,6 +34,12 @@
                     @resource.Name: @resource.Amount @(gameManager.State.HasTechnology(TechnologyConfig.ResurssiMittari)
                                                         ? $"({statistics.Get(resource.Name)}/s)"
                                                         : "")
+                    @foreach (var boost in gameManager.State.GetResourceBoosts(resource.Name))
+                    {
+                        <p>
+                        - @boost.Name (+@boost.Amount)
+                        </p>
+                    }
                 </p>
             }
         </div>
@@ -91,10 +98,16 @@
         await LoadState();
     }
 
-    private void IncrementResource(string resource)
+    private void IncrementResource(string resourceName)
     {
-        gameManager.AddResource(resource, 1);
-        statistics.AddStatistics(resource, 1);
+        var amount = 1 + gameManager.State
+                            .GetResourceBoosts(resourceName)
+                            .Where(boost => boost.BoostType == Business.Attributes.ResourceBoostType.AddConstant)
+                            .Select(boost => boost.Amount)
+                            .Sum();
+        
+        gameManager.AddResource(resourceName, amount);
+        statistics.AddStatistics(resourceName, amount);
         InvokeAsync(StateHasChanged);
     }
 

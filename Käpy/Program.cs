@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Käpy.Business.Services;
 using Käpy.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;

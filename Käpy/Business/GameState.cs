@@ -17,7 +17,7 @@ namespace Käpy.Business
         }
 
         public List<Technology> ResearchedTechnologies { get; set; } = new List<Technology>();
-        
+       
         [JsonIgnore]
         public List<Technology> ResearchableTechnologies
         {
@@ -42,6 +42,14 @@ namespace Käpy.Business
         public bool HasTechnology(string technologyName)
         {
             return ResearchedTechnologies.Any(t => t.Name == technologyName);
+        }
+
+        public IEnumerable<ResourceBoost> GetResourceBoosts(string resourceName)
+        {
+            return TechnologyConfig.All.Where(tech => ResearchedTechnologies.Any(researched => researched.Name == tech.Name))
+                .Where(tech => tech.ResourceBoosts != null)
+                .SelectMany(tech => tech.ResourceBoosts)
+                .Where(boost => boost.ResourceName == resourceName);
         }
 
     }

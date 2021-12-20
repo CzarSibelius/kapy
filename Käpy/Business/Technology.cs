@@ -1,7 +1,5 @@
 ﻿using Käpy.Business.Costs;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Käpy.Business
 {
@@ -10,5 +8,7 @@ namespace Käpy.Business
         public string Name { get; set; }
 
         public IEnumerable<Cost> UnlockRequirements = null;
+
+        public IEnumerable<ResourceBoost> ResourceBoosts = null;
     }
 }

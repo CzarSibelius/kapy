@@ -1,12 +1,8 @@
-﻿using Käpy.Business;
-using Käpy.Business.Costs;
+﻿using Käpy.Business.Costs;
 using Käpy.Data;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace Käpy.Services
+namespace Käpy.Business.Services
 {
     public class GameManager : IGameManager
     {
