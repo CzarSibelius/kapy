@@ -28,6 +28,7 @@ namespace Käpy
                 config.JsonSerializerOptions.PropertyNamingPolicy = null; // PascalCase
                 config.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
                 config.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                config.JsonSerializerOptions.IgnoreNullValues = true;
             });
 
 

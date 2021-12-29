@@ -13,6 +13,8 @@ namespace Käpy.Business
 
         public List<Cost> UnlockRequirements = new List<Cost>();
 
+        public List<ResourceGenerator> ResourceGenerators = new List<ResourceGenerator>();
+
         public bool CanBeBuilt(GameState state)
         {
             if(!BuildRequirements.Any())
@@ -25,12 +27,14 @@ namespace Käpy.Business
 
         public bool IsUnlocked(GameState state)
         {
+            
             if (!UnlockRequirements.Any())
             {
                 return true;
             }
 
-            return UnlockRequirements.All(c => c.RequirementIsMet(state));
+            var requirementsFulfilled = UnlockRequirements.All(c => c.RequirementIsMet(state));
+            return requirementsFulfilled;
         }
     }
 }

@@ -32,15 +32,25 @@
             {
                 <p>
                     @resource.Name: @resource.Amount @(gameManager.State.HasTechnology(TechnologyConfig.ResurssiMittari)
-                                                        ? $"({statistics.Get(resource.Name)}/s)"
-                                                        : "")
-                    @foreach (var boost in gameManager.State.GetResourceBoosts(resource.Name))
-                    {
-                        <p>
-                        - @boost.Name (+@boost.Amount)
-                        </p>
-                    }
+            ? $"({statistics.Get(resource.Name)}/s)"
+            : "")
                 </p>
+                var activeBoosts = gameManager.State.GetResourceBoosts(resource.Name);
+                @foreach (var boost in activeBoosts)
+                {
+                    <p>
+                        - @boost.Name (+@boost.Amount)
+                    </p>
+                }
+
+                var activeGenerators = gameManager.State.GetGenerators(resource.Name).Where(gen => gameManager.State.Resources[gen.GeneratorResourceName] > 0);
+                @foreach (var generator in activeGenerators)
+                {
+                    <p>
+                        - (@generator.GeneratorResourceName +@(generator.Amount * gameManager.State.Resources[generator.GeneratorResourceName])/@generator.TickAmount)
+                    </p>
+                }
+
             }
         </div>
         <div class="col">
@@ -90,6 +100,8 @@
 
     private Timer secTimer = new Timer(1000);
 
+    private int tickCount = 0;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,6 +110,10 @@
         await LoadState();
     }
 
+    /// <summary>
+    /// Manual click
+    /// </summary>
+    /// <param name="resourceName"></param>
     private void IncrementResource(string resourceName)
     {
         var amount = 1 + gameManager.State
@@ -105,7 +121,12 @@
                             .Where(boost => boost.BoostType == Business.Attributes.ResourceBoostType.AddConstant)
                             .Select(boost => boost.Amount)
                             .Sum();
-        
+
+        IncrementResource(resourceName, amount);
+    }
+
+    private void IncrementResource(string resourceName, int amount)
+    {
         gameManager.AddResource(resourceName, amount);
         statistics.AddStatistics(resourceName, amount);
         InvokeAsync(StateHasChanged);
@@ -118,6 +139,28 @@
 
     private void OnTimer(Object source, ElapsedEventArgs e)
     {
+        var maxTickCount = 10;
+
+        tickCount++;
+
+
+        var activeGenerators = gameManager.State
+            .GetGenerators()
+            .Where(gen => gameManager.State.Resources[gen.GeneratorResourceName] > 0)
+            .Where(gen => gen.TickAmount == tickCount);
+        foreach (var generator in activeGenerators)
+        {
+            var generatedAmount = generator.Amount * gameManager.State.Resources[generator.GeneratorResourceName];
+            IncrementResource(generator.ResourceName, generatedAmount);
+        }
+
+        if (tickCount == maxTickCount)
+        {
+            tickCount = 0;
+        }
+
+
+
         statistics.Clear();
         InvokeAsync(StateHasChanged);
     }

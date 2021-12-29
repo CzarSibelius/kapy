@@ -24,6 +24,10 @@ namespace Käpy.Data
         [RequiresResource(ResourceConfig.Tikku, 40)]
         public const string Käpylehmä = "Käpylehmän rakentaminen";
 
+        [RequiresTechnology(Käpylehmä)]
+        [RequiresResource(ResourceConfig.Käpy, 150)]
+        public const string Oravat = "Oravien kesyttäminen";
+
         public static IEnumerable<Technology> All
         {
             get => typeof(TechnologyConfig)

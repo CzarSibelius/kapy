@@ -33,11 +33,11 @@ namespace Käpy.Business
         [JsonIgnore]
         public IEnumerable<(string Name, int Amount)> ResourceAmounts
         {
-            get => UnlockedResources.Select(ur => (ur.Name, Resources[ur.Name]));
+            get => UnlockedResources.Select(ur => (ur.Name, Resources.TryGetValue(ur.Name, out var value) ? value : 0));
         }
 
         [JsonIgnore]
-        public IEnumerable<Resource> UnlockedResources { get => Resources.Select(r => ResourceConfig.Get(r.Key)).Where(r => r.IsUnlocked(this)); }
+        public IEnumerable<Resource> UnlockedResources { get => ResourceConfig.All.Where(r => r.IsUnlocked(this)); }
 
         public bool HasTechnology(string technologyName)
         {
@@ -50,6 +50,27 @@ namespace Käpy.Business
                 .Where(tech => tech.ResourceBoosts != null)
                 .SelectMany(tech => tech.ResourceBoosts)
                 .Where(boost => boost.ResourceName == resourceName);
+        }
+
+        public IEnumerable<ResourceGenerator> GetGenerators(string resourceName)
+        {
+            
+            var generatorConfigs = ResourceConfig.All
+                .Where(tech => tech.ResourceGenerators != null)
+                .SelectMany(tech => tech.ResourceGenerators)
+                .Where(generator => generator.ResourceName == resourceName);
+
+            return generatorConfigs;
+        }
+
+        public IEnumerable<ResourceGenerator> GetGenerators()
+        {
+
+            var generatorConfigs = ResourceConfig.All
+                .Where(tech => tech.ResourceGenerators != null)
+                .SelectMany(tech => tech.ResourceGenerators);
+
+            return generatorConfigs;
         }
 
     }

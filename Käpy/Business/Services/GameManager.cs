@@ -10,7 +10,14 @@ namespace Käpy.Business.Services
 
         public void AddResource(string resourceName, int amount)
         {
-            State.Resources[resourceName] += amount;
+            if (!State.Resources.ContainsKey(resourceName))
+            {
+                State.Resources.Add(resourceName, amount);
+            }
+            else
+            {
+                State.Resources[resourceName] += amount;
+            }
             var resource = ResourceConfig.Get(resourceName);
 
             resource.BuildRequirements?

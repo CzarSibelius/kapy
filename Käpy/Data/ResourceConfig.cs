@@ -20,6 +20,10 @@ namespace Käpy.Data
         [RequiresResource(Tikku, 4)]
         public const string Käpylehmä = "Käpylehmä";
 
+        [RequiresTechnology(TechnologyConfig.Oravat)]
+        [ResourceGenerator(ResourceConfig.Käpy, 1, 10)]
+        public const string Orava = "Orava";
+
         public static IEnumerable<Resource> All
         {
             get => typeof(ResourceConfig)
@@ -29,9 +33,11 @@ namespace Käpy.Data
                     {
                         Name = fi.GetValue(null) as string,
                         BuildRequirements = GetResourceRequirements(fi).ToList(),
-                        UnlockRequirements = GetTechnologyRequirements(fi).ToList()
+                        UnlockRequirements = GetTechnologyRequirements(fi).ToList(),
+                        ResourceGenerators = GetResourceGenerators(fi).ToList()
                     });
         }
+
         public static Resource Get(string resourceName)
         {
             try
@@ -60,6 +66,14 @@ namespace Käpy.Data
                             .Where(a => a is RequiresTechnologyAttribute)
                             .Cast<RequiresTechnologyAttribute>()
                             .Select(a => new TechnologyCost { Name = a.Name });
+        }
+
+        private static IEnumerable<ResourceGenerator> GetResourceGenerators(FieldInfo fieldInfo)
+        {
+            return fieldInfo.GetCustomAttributes(false)
+                            .Where(a => a is ResourceGeneratorAttribute)
+                            .Cast<ResourceGeneratorAttribute>()
+                            .Select(a => new ResourceGenerator { GeneratorResourceName = fieldInfo.Name, ResourceName = a.ResourceName, Amount = a.Amount, TickAmount = a.TickAmount });
         }
     }
 
